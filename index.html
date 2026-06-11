@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Giao Diện Chọn Túi Mù Siêu Mượt</title>
+    <style>
+        /* Tối ưu cuộn toàn trang mượt mà cho mobile */
+        html, body {
+            background: #0d0c1d;
+            background-image: radial-gradient(circle at top, #1e1145 0%, #0d0c1d 70%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px 15px 120px 15px; 
+            position: relative;
+        }
+
+        /* Khu vực Logo */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0 20px 0;
+            gap: 10px;
+        }
+
+        .logo-image-frame {
+            width: 70px;
+            height: 70px;
+            background: #1c1a3a;
+            border: 2px solid #00ffff;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .logo-title {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff 20%, #00ffff 50%, #0055ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        /* BƯỚC 1: NHẬP ID */
+        #step-login {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: #1c1a3a;
+            border: 2px solid #3a3671;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            text-align: center;
+        }
+
+        .input-group input:focus {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .alert-success-login {
+            display: none;
+            background: rgba(0, 255, 170, 0.15);
+            border: 1px solid #00ffaa;
+            color: #00ffaa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* BƯỚC 2: SHOP TÚI MÙ */
+        #step-shop {
+            display: none;
+        }
+
+        .user-badge {
+            background: #1c1a3a;
+            border-left: 4px solid #00ffff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-badge img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid #00ffff;
+            object-fit: cover;
+        }
+
+        .user-info-text {
+            flex-grow: 1;
+        }
+
+        .user-badge span {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        /* Lưới 6 gói túi mù */
+        .grid-bags {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .bag-card {
+            background: #1c1942;
+            border: 2px solid #3d348b;
+            border-radius: 15px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .bag-card.selected {
+            border-color: #00ffff;
+            background: #252156;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            transform: scale(1.02);
+        }
+
+        .bag-card.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background: #00ffff;
+            color: #131129;
+            width: 18px;
+            height: 18px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bag-image-box {
+            width: 100%;
+            height: 110px;
+            background: #252156;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            border: 1px dashed #5348b6;
+            pointer-events: none;
+        }
+
+        .bag-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .bag-price {
+            font-size: 12px;
+            color: #ffcc00;
+        }
+
+        /* Nút cố định đáy màn hình mượt */
+        .action-fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            padding: 15px;
+            background: linear-gradient(to top, #0d0c1d 80%, transparent);
+            box-sizing: border-box;
+            z-index: 99;
+        }
+
+        /* NÚT BẤM CHÍNH */
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(180deg, #ff0055 0%, #990033 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+        }
+
+        /* BƯỚC 3: KẾT QUẢ */
+        #screen-success {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .success-icon {
+            font-size: 65px;
+            margin-bottom: 10px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        .box-info-reward {
+            background: #1c1a3a;
+            border: 1px solid #3a3671;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+            margin: 20px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-out-id {
+            width: 100%;
+            padding: 14px;
+            background: #252156;
+            border: 1px solid #3d348b;
+            border-radius: 50px;
+            color: #ff5555;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        /* HIỆU ỨNG CHỜ XÉ */
+        .screen-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(13, 12, 29, 0.98);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-box {
+            font-size: 50px;
+            animation: shake 0.4s infinite alternate;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(-10deg); }
+            100% { transform: rotate(10deg); }
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        
+        <div class="logo-container">
+            <div class="logo-image-frame">
+                <img src="https://i.postimg.cc/wMghXQGH/Screenshot-2026-06-11-10-36-50-78.jpg" alt="Logo" style="width: 100%; height: 150%; object-fit: cover;">
+            </div>
+            <div class="logo-title">TUI MU FREEFIRE</div>
+        </div>
+
+        <div id="step-login">
+            <div class="alert-success-login" id="login-alert"></div>
+            <div class="input-group">
+                <input type="text" id="game-id" placeholder="Nhập ID nhân vật của bạn...">
+            </div>
+            <button class="btn-main" id="btn-submit-login" onclick="processLogin()">Bắt đầu chơi</button>
+        </div>
+
+        <div id="step-shop">
+            
+            <div class="user-badge">
+                <img src="https://i.postimg.cc/B6MV1bmM/IMG-20260611-110217.png" alt="User Avatar">
+                <div class="user-info-text">
+                    <div>ID: <span id="display-id">000000</span></div>
+                    <div style="font-size: 11px; color: #aaa; margin-top: 2px;">Cấp độ chưa rõ <span style="color:#00ffaa;"></span></div>
+                </div>
+                <div>Trạng thái: <span style="color:#00ffaa;">Đã liên kết</span></div>
+            </div>
+
+            <div class="grid-bags">
+                <div class="bag-card" onclick="selectBag(this, 'Túi Đồng')">
+                    <div class="bag-image-box">
+                        <img src="https://i.postimg.cc/15XFs2Gd/Messenger-creation-12D36509-A744-4750-B142-E29E3C2B8983.jpg" alt="Túi Đồng" style="width: 60%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="bag-name">Túi Đồng</div>
+                    <div class="bag-price"></div>
+                </div>
+
+                <div class="bag-card" onclick="selectBag(this, 'Túi Bạc')">
+                    <div class="bag-image-box">
+                        <img src="https://i.postimg.cc/15XFs2Gd/Messenger-creation-12D36509-A744-4750-B142-E29E3C2B8983.jpg" alt="Túi Bạc" style="width: 60%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="bag-name">Túi Bạc</div>
+                    <div class="bag-price"></div>
+                </div>
+
+                <div class="bag-card" onclick="selectBag(this, 'Túi Vàng')">
+                    <div class="bag-image-box">
+                        <img src="https://i.postimg.cc/15XFs2Gd/Messenger-creation-12D36509-A744-4750-B142-E29E3C2B8983.jpg" alt="Túi Vàng" style="width: 60%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="bag-name">Túi Vàng</div>
+                    <div class="bag-price"></div>
+                </div>
+
+                <div class="bag-card" onclick="selectBag(this, 'Túi Kim Cương')">
+                    <div class="bag-image-box">
+                        <img src="https://i.postimg.cc/15XFs2Gd/Messenger-creation-12D36509-A744-4750-B142-E29E3C2B8983.jpg" alt="Túi Kim Cương" style="width: 60%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="bag-name">Túi VIP</div>
+                    <div class="bag-price"></div>
+                </div>
+
+                <div class="bag-card" onclick="selectBag(this, 'Túi VIP')">
+                    <div class="bag-image-box">
+                        <img src="https://i.postimg.cc/15XFs2Gd/Messenger-creation-12D36509-A744-4750-B142-E29E3C2B8983.jpg" alt="Túi VIP" style="width: 60%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="bag-name">Túi VIP</div>
+                    <div class="bag-price"></div>
+                </div>
+
+                <div class="bag-card" onclick="selectBag(this, 'Túi Thần Thoại')">
+                    <div class="bag-image-box">
+                        <img src="https://i.postimg.cc/15XFs2Gd/Messenger-creation-12D36509-A744-4750-B142-E29E3C2B8983.jpg" alt="Túi Thần Thoại" style="width: 60%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="bag-name">Túi Thần Thoại</div>
+                    <div class="bag-price"></div>
+                </div>
+            </div>
+
+            <div class="action-fixed-bottom">
+                <button class="btn-main" onclick="startTearBag()">Xé Túi Ngay</button>
+            </div>
+        </div>
+
+        <div id="screen-success">
+            <div class="success-icon">🎉</div>
+            <h2 style="color: #00ffaa; margin-bottom: 5px;">XÉ THÀNH CÔNG!</h2>
+            <p style="font-size: 13px; color: #aaa;">Gói đã chọn: <span id="selected-bag-txt" style="color:#fff; font-weight:bold;">...</span></p>
+            
+            <div style="margin: 20px 0; font-size: 16px;">
+                Phần quà nhận được: <br>
+                <b style="color: #ffcc00; font-size: 24px;" id="reward-text">5,000 Kim Cương</b>
+            </div>
+
+            <div class="box-info-reward">
+                <div style="color: #00ffff; font-weight: bold; margin-bottom: 5px;">Lưu ý hệ thống:</div>
+                • Kim cương đang được chuyển vào ID vừa nhập.<br>
+                • Chờ 15 - 30 phút kiểm tra hòm thư trong game nhé!
+            </div>
+
+            <div class="action-group">
+                <button class="btn-main" onclick="backToShop()">Tiếp tục xé túi</button>
+                <button class="btn-out-id" onclick="logoutId()">Đổi ID khác</button>
+            </div>
+        </div>
+
+        <div class="screen-overlay" id="loading-overlay">
+            <div class="loading-box">📦</div>
+            <h3 style="color: #ffcc00; font-size: 18px; margin-top: 15px;">Đang tiến hành xé túi...</h3>
+            <p style="color: #aaa; font-size: 12px; margin-top: 5px;">Vui lòng đợi trong giây lát</p>
+        </div>
+
+    </div>
+
+    <script>
+        const rewards = ["113 💎", "51💎", "566 💎", "1.132 💎 ", " 5.750 💎"];
+        let currentSelectedBag = ""; 
+
+        function processLogin() {
+            const idInput = document.getElementById('game-id').value.trim();
+            if(idInput === "") {
+                alert("Bạn chưa nhập ID nhân vật!");
+                return;
+            }
+
+            const alertBox = document.getElementById('login-alert');
+            alertBox.innerText = "Đăng nhập thành công ID: " + idInput + " !";
+            alertBox.style.display = "block";
+            document.getElementById('btn-submit-login').style.pointerEvents = "none";
+
+            setTimeout(() => {
+                document.getElementById('display-id').innerText = idInput;
+                document.getElementById('step-login').style.display = 'none';
+                document.getElementById('step-shop').style.display = 'block';
+                window.scrollTo(0, 0);
+            }, 1200);
+        }
+
+        function selectBag(element, bagName) {
+            const allBags = document.querySelectorAll('.bag-card');
+            allBags.forEach(bag => bag.classList.remove('selected'));
+
+            element.classList.add('selected');
+            currentSelectedBag = bagName; 
+        }
+
+        function startTearBag() {
+            if(currentSelectedBag === "") {
+                alert("Vui lòng click chọn 1 gói túi mù trước khi bấm Xé!");
+                return;
+            }
+
+            const loading = document.getElementById('loading-overlay');
+            loading.style.display = 'flex'; 
+
+            setTimeout(() => {
+                loading.style.display = 'none';
+                document.getElementById('step-shop').style.display = 'none';
+                
+                document.getElementById('selected-bag-txt').innerText = currentSelectedBag;
+                const randomGift = rewards[Math.floor(Math.random() * rewards.length)];
+                document.getElementById('reward-text').innerText = randomGift;
+                
+                document.getElementById('screen-success').style.display = 'block';
+                window.scrollTo(0, 0);
+            }, 1800); 
+        }
+
+        function backToShop() {
+            currentSelectedBag = ""; 
+            const allBags = document.querySelectorAll('.bag-card');
+            allBags.forEach(bag => bag.classList.remove('selected'));
+
+            document.getElementById('screen-success').style.display = 'none';
+            document.getElementById('step-shop').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function logoutId() {
+            currentSelectedBag = ""; 
+            const allBags = document.querySelectorAll('.bag-card');
+            allBags.forEach(bag => bag.classList.remove('selected'));
+
+            document.getElementById('game-id').value = "";
+            const alertBox = document.getElementById('login-alert');
+            alertBox.style.display = "none";
+            alertBox.innerText = "";
+            
+            document.getElementById('btn-submit-login').style.pointerEvents = "auto";
+            document.getElementById('screen-success').style.display = 'none';
+            document.getElementById('step-login').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+  </html>
+  
